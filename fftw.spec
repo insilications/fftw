@@ -1,6 +1,6 @@
 Name     : fftw
 Version  : 3.3.4
-Release  : 5
+Release  : 6
 URL      : http://www.fftw.org/fftw-3.3.4.tar.gz
 Source0  : http://www.fftw.org/fftw-3.3.4.tar.gz
 Summary  : fast Fourier transform library
