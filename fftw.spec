@@ -1,6 +1,6 @@
 Name     : fftw
 Version  : 3.3.4
-Release  : 6
+Release  : 7
 URL      : http://www.fftw.org/fftw-3.3.4.tar.gz
 Source0  : http://www.fftw.org/fftw-3.3.4.tar.gz
 Summary  : fast Fourier transform library
@@ -68,7 +68,7 @@ cp -r fftw-3.3.4-single fftw-3.3.4-long-double
 %build
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
-export CFLAGS="$CFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition "
+export CFLAGS="$CFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition -ffast-math "
 export CXXFLAGS="$CXXFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition "
 
 cd fftw-3.3.4-single
