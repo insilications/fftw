@@ -1,8 +1,8 @@
 Name     : fftw
-Version  : 3.3.5
+Version  : 3.3.6
 Release  : 8
-URL      : http://www.fftw.org/fftw-3.3.5.tar.gz
-Source0  : http://www.fftw.org/fftw-3.3.5.tar.gz
+URL      : http://www.fftw.org/fftw-3.3.6-pl1.tar.gz
+Source0  : http://www.fftw.org/fftw-3.3.6-pl1.tar.gz
 Summary  : fast Fourier transform library
 Group    : Development/Tools
 License  : GPL-2.0
@@ -58,14 +58,14 @@ lib components for the fftw package.
 
 
 %prep
-%setup -c -n fftw-3.3.5
+%setup -c -n fftw-3.3.6-pl1
 ls
 ls ..
-mv fftw-3.3.5 fftw-3.3.5-single
-cp -r fftw-3.3.5-single fftw-3.3.5-double
-cp -r fftw-3.3.5-single fftw-3.3.5-long-double
-cp -r fftw-3.3.5-single fftw-3.3.5-double-avx2
-cp -r fftw-3.3.5-single fftw-3.3.5-single-avx2
+mv fftw-3.3.6-pl1 fftw-3.3.6-single
+cp -r fftw-3.3.6-single fftw-3.3.6-double
+cp -r fftw-3.3.6-single fftw-3.3.6-long-double
+cp -r fftw-3.3.6-single fftw-3.3.6-double-avx2
+cp -r fftw-3.3.6-single fftw-3.3.6-single-avx2
 
 %build
 export AR=gcc-ar
@@ -73,22 +73,22 @@ export RANLIB=gcc-ranlib
 export CFLAGS="$CFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition -ffast-math "
 export CXXFLAGS="$CXXFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition "
 
-cd fftw-3.3.5-single
+cd fftw-3.3.6-single
 %configure --disable-static --enable-shared --enable-threads --enable-float --enable-sse2
 make V=1  %{?_smp_mflags}
-cd ../fftw-3.3.5-double
+cd ../fftw-3.3.6-double
 %configure --disable-static --enable-shared --enable-threads --enable-sse2 
 make V=1  %{?_smp_mflags}
-cd ../fftw-3.3.5-long-double
+cd ../fftw-3.3.6-long-double
 %configure --disable-static --enable-shared --enable-threads --enable-long-double 
 make V=1  %{?_smp_mflags}
 
 export CFLAGS="$CFLAGS  -march=haswell"
 export CXXFLAGS="$CXXFLAGS  -march=haswell"
-cd ../fftw-3.3.5-single-avx2
+cd ../fftw-3.3.6-single-avx2
 %configure --disable-static --enable-shared --enable-threads --enable-float --enable-avx2 --enable-fma --libdir=/usr/lib64/avx2
 make V=1  %{?_smp_mflags}
-cd ../fftw-3.3.5-double-avx2
+cd ../fftw-3.3.6-double-avx2
 %configure --disable-static --enable-shared --enable-threads --enable-avx2 --enable-fma --libdir=/usr/lib64/avx2
 make V=1  %{?_smp_mflags}
 
@@ -96,24 +96,24 @@ make V=1  %{?_smp_mflags}
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost
-cd fftw-3.3.5-single
+cd fftw-3.3.6-single
 make VERBOSE=1 V=1 %{?_smp_mflags} check
-cd ../fftw-3.3.5-double
+cd ../fftw-3.3.6-double
 make VERBOSE=1 V=1 %{?_smp_mflags} check
-cd ../fftw-3.3.5-long-double
+cd ../fftw-3.3.6-long-double
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
 rm -rf %{buildroot}
-cd fftw-3.3.5-single
+cd fftw-3.3.6-single
 %make_install
-cd ../fftw-3.3.5-double
+cd ../fftw-3.3.6-double
 %make_install
-cd ../fftw-3.3.5-double-avx2
+cd ../fftw-3.3.6-double-avx2
 %make_install
-cd ../fftw-3.3.5-single-avx2
+cd ../fftw-3.3.6-single-avx2
 %make_install
-cd ../fftw-3.3.5-long-double
+cd ../fftw-3.3.6-long-double
 %make_install
 
 %files
