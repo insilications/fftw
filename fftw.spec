@@ -136,12 +136,12 @@ cd ../fftw-3.3.6-long-double
 /usr/lib64/*.so
 /usr/lib64/pkgconfig/*.pc
 
-%exclude /usr/lib64/avx2/libfftw3.so
-%exclude /usr/lib64/avx2/libfftw3_threads.so
-%exclude /usr/lib64/avx2/libfftw3f.so
-%exclude /usr/lib64/avx2/libfftw3f_threads.so
-%exclude /usr/lib64/avx2/pkgconfig/fftw3.pc
-%exclude /usr/lib64/avx2/pkgconfig/fftw3f.pc
+%exclude /usr/lib64/haswell/libfftw3.so
+%exclude /usr/lib64/haswell/libfftw3_threads.so
+%exclude /usr/lib64/haswell/libfftw3f.so
+%exclude /usr/lib64/haswell/libfftw3f_threads.so
+%exclude /usr/lib64/haswell/pkgconfig/fftw3.pc
+%exclude /usr/lib64/haswell/pkgconfig/fftw3f.pc
 
 
 %files doc
@@ -152,4 +152,4 @@ cd ../fftw-3.3.6-long-double
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/*.so.*
-/usr/lib64/avx2/*.so.*
+/usr/lib64/haswell/*.so.*
