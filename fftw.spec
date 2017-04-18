@@ -1,6 +1,6 @@
 Name     : fftw
 Version  : 3.3.6
-Release  : 9
+Release  : 10
 URL      : http://www.fftw.org/fftw-3.3.6-pl1.tar.gz
 Source0  : http://www.fftw.org/fftw-3.3.6-pl1.tar.gz
 Summary  : fast Fourier transform library
@@ -86,10 +86,10 @@ make V=1  %{?_smp_mflags}
 export CFLAGS="$CFLAGS  -march=haswell"
 export CXXFLAGS="$CXXFLAGS  -march=haswell"
 cd ../fftw-3.3.6-single-avx2
-%configure --disable-static --enable-shared --enable-threads --enable-float --enable-avx2 --enable-fma --libdir=/usr/lib64/avx2
+%configure --disable-static --enable-shared --enable-threads --enable-float --enable-avx2 --enable-fma --libdir=/usr/lib64/haswell
 make V=1  %{?_smp_mflags}
 cd ../fftw-3.3.6-double-avx2
-%configure --disable-static --enable-shared --enable-threads --enable-avx2 --enable-fma --libdir=/usr/lib64/avx2
+%configure --disable-static --enable-shared --enable-threads --enable-avx2 --enable-fma --libdir=/usr/lib64/haswell
 make V=1  %{?_smp_mflags}
 
 %check
