@@ -1,8 +1,8 @@
 Name     : fftw
 Version  : 3.3.6
-Release  : 14
-URL      : http://www.fftw.org/fftw-3.3.6-pl1.tar.gz
-Source0  : http://www.fftw.org/fftw-3.3.6-pl1.tar.gz
+Release  : 15
+URL      : http://www.fftw.org/fftw-3.3.6-pl2.tar.gz
+Source0  : http://www.fftw.org/fftw-3.3.6-pl2.tar.gz
 Summary  : fast Fourier transform library
 Group    : Development/Tools
 License  : GPL-2.0
@@ -58,14 +58,16 @@ lib components for the fftw package.
 
 
 %prep
-%setup -c -n fftw-3.3.6-pl1
+%setup -c -n fftw-3.3.6-pl2
 ls
 ls ..
-mv fftw-3.3.6-pl1 fftw-3.3.6-single
+mv fftw-3.3.6-pl2 fftw-3.3.6-single
 cp -r fftw-3.3.6-single fftw-3.3.6-double
 cp -r fftw-3.3.6-single fftw-3.3.6-long-double
 cp -r fftw-3.3.6-single fftw-3.3.6-double-avx2
 cp -r fftw-3.3.6-single fftw-3.3.6-single-avx2
+cp -r fftw-3.3.6-single fftw-3.3.6-double-avx512
+cp -r fftw-3.3.6-single fftw-3.3.6-single-avx512
 
 %build
 export AR=gcc-ar
@@ -83,13 +85,22 @@ cd ../fftw-3.3.6-long-double
 %configure --disable-static --enable-shared --enable-threads --enable-long-double 
 make V=1  %{?_smp_mflags}
 
-export CFLAGS="$CFLAGS  -march=haswell"
-export CXXFLAGS="$CXXFLAGS  -march=haswell"
+export CFLAGS="$CFLAGS  -march=haswell -mtune=haswell"
+export CXXFLAGS="$CXXFLAGS  -march=haswell -mtune-haswell"
 cd ../fftw-3.3.6-single-avx2
 %configure --disable-static --enable-shared --enable-threads --enable-float --enable-avx2 --enable-fma --libdir=/usr/lib64/haswell
 make V=1  %{?_smp_mflags}
 cd ../fftw-3.3.6-double-avx2
 %configure --disable-static --enable-shared --enable-threads --enable-avx2 --enable-fma --libdir=/usr/lib64/haswell
+make V=1  %{?_smp_mflags}
+
+export CFLAGS="$CFLAGS  -march=skylake-avx512"
+export CXXFLAGS="$CXXFLAGS  -march=skylake-avx512"
+cd ../fftw-3.3.6-single-avx512
+%configure --disable-static --enable-shared --enable-threads --enable-float --enable-avx512 --enable-fma --libdir=/usr/lib64/haswell/avx512_1/
+make V=1  %{?_smp_mflags}
+cd ../fftw-3.3.6-double-avx512
+%configure --disable-static --enable-shared --enable-threads --enable-avx512 --enable-fma --libdir=/usr/lib64/haswell/avx512_1/
 make V=1  %{?_smp_mflags}
 
 %check
@@ -112,6 +123,10 @@ cd ../fftw-3.3.6-double
 cd ../fftw-3.3.6-double-avx2
 %make_install
 cd ../fftw-3.3.6-single-avx2
+%make_install
+cd ../fftw-3.3.6-double-avx512
+%make_install
+cd ../fftw-3.3.6-single-avx512
 %make_install
 cd ../fftw-3.3.6-long-double
 %make_install
@@ -142,6 +157,8 @@ cd ../fftw-3.3.6-long-double
 %exclude /usr/lib64/haswell/libfftw3f_threads.so
 %exclude /usr/lib64/haswell/pkgconfig/fftw3.pc
 %exclude /usr/lib64/haswell/pkgconfig/fftw3f.pc
+%exclude /usr/lib64/haswell/avx512_1/pkgconfig/fftw3.pc
+%exclude /usr/lib64/haswell/avx512_1/pkgconfig/fftw3f.pc
 
 
 %files doc
@@ -153,3 +170,4 @@ cd ../fftw-3.3.6-long-double
 %defattr(-,root,root,-)
 /usr/lib64/*.so.*
 /usr/lib64/haswell/*.so.*
+/usr/lib64/haswell/avx512_1/*.so.*
