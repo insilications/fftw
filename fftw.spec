@@ -1,6 +1,6 @@
 Name     : fftw
 Version  : 3.3.6
-Release  : 15
+Release  : 16
 URL      : http://www.fftw.org/fftw-3.3.6-pl2.tar.gz
 Source0  : http://www.fftw.org/fftw-3.3.6-pl2.tar.gz
 Summary  : fast Fourier transform library
@@ -159,7 +159,7 @@ cd ../fftw-3.3.6-long-double
 %exclude /usr/lib64/haswell/pkgconfig/fftw3f.pc
 %exclude /usr/lib64/haswell/avx512_1/pkgconfig/fftw3.pc
 %exclude /usr/lib64/haswell/avx512_1/pkgconfig/fftw3f.pc
-
+%exclude /usr/lib64/haswell/avx512_1/*.so
 
 %files doc
 %defattr(-,root,root,-)
