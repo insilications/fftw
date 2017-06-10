@@ -1,6 +1,6 @@
 Name     : fftw
 Version  : 3.3.6
-Release  : 16
+Release  : 17
 URL      : http://www.fftw.org/fftw-3.3.6-pl2.tar.gz
 Source0  : http://www.fftw.org/fftw-3.3.6-pl2.tar.gz
 Summary  : fast Fourier transform library
@@ -116,10 +116,6 @@ make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
 rm -rf %{buildroot}
-cd fftw-3.3.6-single
-%make_install
-cd ../fftw-3.3.6-double
-%make_install
 cd ../fftw-3.3.6-double-avx2
 %make_install
 cd ../fftw-3.3.6-single-avx2
@@ -129,6 +125,10 @@ cd ../fftw-3.3.6-double-avx512
 cd ../fftw-3.3.6-single-avx512
 %make_install
 cd ../fftw-3.3.6-long-double
+%make_install
+cd fftw-3.3.6-single
+%make_install
+cd ../fftw-3.3.6-double
 %make_install
 
 %files
