@@ -1,6 +1,6 @@
 Name     : fftw
 Version  : 3.3.6
-Release  : 17
+Release  : 18
 URL      : http://www.fftw.org/fftw-3.3.6-pl2.tar.gz
 Source0  : http://www.fftw.org/fftw-3.3.6-pl2.tar.gz
 Summary  : fast Fourier transform library
@@ -59,15 +59,13 @@ lib components for the fftw package.
 
 %prep
 %setup -c -n fftw-3.3.6-pl2
-ls
-ls ..
-mv fftw-3.3.6-pl2 fftw-3.3.6-single
-cp -r fftw-3.3.6-single fftw-3.3.6-double
-cp -r fftw-3.3.6-single fftw-3.3.6-long-double
-cp -r fftw-3.3.6-single fftw-3.3.6-double-avx2
-cp -r fftw-3.3.6-single fftw-3.3.6-single-avx2
-cp -r fftw-3.3.6-single fftw-3.3.6-double-avx512
-cp -r fftw-3.3.6-single fftw-3.3.6-single-avx512
+cp -a fftw-3.3.6-pl2 ../fftw-3.3.6-single
+cp -a fftw-3.3.6-pl2 ../fftw-3.3.6-double
+cp -a fftw-3.3.6-pl2 ../fftw-3.3.6-long-double
+cp -a fftw-3.3.6-pl2 ../fftw-3.3.6-double-avx2
+cp -a fftw-3.3.6-pl2 ../fftw-3.3.6-single-avx2
+cp -a fftw-3.3.6-pl2 ../fftw-3.3.6-double-avx512
+cp -a fftw-3.3.6-pl2 ../fftw-3.3.6-single-avx512
 
 %build
 export AR=gcc-ar
@@ -75,61 +73,82 @@ export RANLIB=gcc-ranlib
 export CFLAGS="$CFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition -ffast-math "
 export CXXFLAGS="$CXXFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition "
 
-cd fftw-3.3.6-single
+pushd ../fftw-3.3.6-single
 %configure --disable-static --enable-shared --enable-threads --enable-float --enable-sse2
 make V=1  %{?_smp_mflags}
-cd ../fftw-3.3.6-double
+popd
+
+pushd ../fftw-3.3.6-double
 %configure --disable-static --enable-shared --enable-threads --enable-sse2 
 make V=1  %{?_smp_mflags}
-cd ../fftw-3.3.6-long-double
+popd
+
+
+pushd ../fftw-3.3.6-long-double
 %configure --disable-static --enable-shared --enable-threads --enable-long-double 
 make V=1  %{?_smp_mflags}
+popd
 
 export CFLAGS="$CFLAGS  -march=haswell -mtune=haswell"
 export CXXFLAGS="$CXXFLAGS  -march=haswell -mtune-haswell"
-cd ../fftw-3.3.6-single-avx2
+pushd ../fftw-3.3.6-single-avx2
 %configure --disable-static --enable-shared --enable-threads --enable-float --enable-avx2 --enable-fma --libdir=/usr/lib64/haswell
 make V=1  %{?_smp_mflags}
-cd ../fftw-3.3.6-double-avx2
+popd
+
+pushd ../fftw-3.3.6-double-avx2
 %configure --disable-static --enable-shared --enable-threads --enable-avx2 --enable-fma --libdir=/usr/lib64/haswell
 make V=1  %{?_smp_mflags}
+popd
 
 export CFLAGS="$CFLAGS  -march=skylake-avx512"
 export CXXFLAGS="$CXXFLAGS  -march=skylake-avx512"
-cd ../fftw-3.3.6-single-avx512
-%configure --disable-static --enable-shared --enable-threads --enable-float --enable-avx512 --enable-fma --libdir=/usr/lib64/haswell/avx512_1/
+pushd ../fftw-3.3.6-single-avx512
+%configure --disable-static --enable-shared --enable-threads --enable-float --enable-avx2 --enable-avx512 --enable-fma --libdir=/usr/lib64/haswell/avx512_1/
 make V=1  %{?_smp_mflags}
-cd ../fftw-3.3.6-double-avx512
-%configure --disable-static --enable-shared --enable-threads --enable-avx512 --enable-fma --libdir=/usr/lib64/haswell/avx512_1/
+popd
+pushd ../fftw-3.3.6-double-avx512
+%configure --disable-static --enable-shared --enable-threads --enable-avx2 --enable-avx512 --enable-fma --libdir=/usr/lib64/haswell/avx512_1/
 make V=1  %{?_smp_mflags}
+popd
 
 %check
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost
-cd fftw-3.3.6-single
+pushd ../fftw-3.3.6-single
 make VERBOSE=1 V=1 %{?_smp_mflags} check
-cd ../fftw-3.3.6-double
+popd
+pushd ../fftw-3.3.6-double
 make VERBOSE=1 V=1 %{?_smp_mflags} check
-cd ../fftw-3.3.6-long-double
+popd
+pushd ../fftw-3.3.6-long-double
 make VERBOSE=1 V=1 %{?_smp_mflags} check
+popd
 
 %install
 rm -rf %{buildroot}
-cd ../fftw-3.3.6-double-avx2
+pushd ../fftw-3.3.6-double-avx2
 %make_install
-cd ../fftw-3.3.6-single-avx2
+popd
+pushd ../fftw-3.3.6-single-avx2
 %make_install
-cd ../fftw-3.3.6-double-avx512
+popd
+pushd ../fftw-3.3.6-double-avx512
 %make_install
-cd ../fftw-3.3.6-single-avx512
+popd
+pushd ../fftw-3.3.6-single-avx512
 %make_install
-cd ../fftw-3.3.6-long-double
+popd
+pushd ../fftw-3.3.6-long-double
 %make_install
-cd fftw-3.3.6-single
+popd
+pushd ../fftw-3.3.6-single
 %make_install
-cd ../fftw-3.3.6-double
+popd
+pushd ../fftw-3.3.6-double
 %make_install
+popd
 
 %files
 %defattr(-,root,root,-)
