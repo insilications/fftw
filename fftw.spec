@@ -1,8 +1,8 @@
 Name     : fftw
-Version  : 3.3.6
+Version  : 3.3.8
 Release  : 22
-URL      : http://www.fftw.org/fftw-3.3.6-pl2.tar.gz
-Source0  : http://www.fftw.org/fftw-3.3.6-pl2.tar.gz
+URL      : http://www.fftw.org/fftw-3.3.8.tar.gz
+Source0  : http://www.fftw.org/fftw-3.3.8.tar.gz
 Summary  : fast Fourier transform library
 Group    : Development/Tools
 License  : GPL-2.0
@@ -58,14 +58,14 @@ lib components for the fftw package.
 
 
 %prep
-%setup -c -n fftw-3.3.6-pl2
-cp -a fftw-3.3.6-pl2 ../fftw-3.3.6-single
-cp -a fftw-3.3.6-pl2 ../fftw-3.3.6-double
-cp -a fftw-3.3.6-pl2 ../fftw-3.3.6-long-double
-cp -a fftw-3.3.6-pl2 ../fftw-3.3.6-double-avx2
-cp -a fftw-3.3.6-pl2 ../fftw-3.3.6-single-avx2
-cp -a fftw-3.3.6-pl2 ../fftw-3.3.6-double-avx512
-cp -a fftw-3.3.6-pl2 ../fftw-3.3.6-single-avx512
+%setup -c -n fftw-3.3.8
+cp -a fftw-3.3.8 ../fftw-3.3.8-single
+cp -a fftw-3.3.8 ../fftw-3.3.8-double
+cp -a fftw-3.3.8 ../fftw-3.3.8-long-double
+cp -a fftw-3.3.8 ../fftw-3.3.8-double-avx2
+cp -a fftw-3.3.8 ../fftw-3.3.8-single-avx2
+cp -a fftw-3.3.8 ../fftw-3.3.8-double-avx512
+cp -a fftw-3.3.8 ../fftw-3.3.8-single-avx512
 
 %build
 export AR=gcc-ar
@@ -73,41 +73,41 @@ export RANLIB=gcc-ranlib
 export CFLAGS="$CFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition -ffast-math "
 export CXXFLAGS="$CXXFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition "
 
-pushd ../fftw-3.3.6-single
+pushd ../fftw-3.3.8-single
 %configure --disable-static --enable-shared --enable-threads --enable-float --enable-sse2
 make V=1  %{?_smp_mflags}
 popd
 
-pushd ../fftw-3.3.6-double
+pushd ../fftw-3.3.8-double
 %configure --disable-static --enable-shared --enable-threads --enable-sse2 
 make V=1  %{?_smp_mflags}
 popd
 
 
-pushd ../fftw-3.3.6-long-double
+pushd ../fftw-3.3.8-long-double
 %configure --disable-static --enable-shared --enable-threads --enable-long-double 
 make V=1  %{?_smp_mflags}
 popd
 
 export CFLAGS="$CFLAGS  -march=haswell -mtune=haswell"
 export CXXFLAGS="$CXXFLAGS  -march=haswell -mtune-haswell"
-pushd ../fftw-3.3.6-single-avx2
+pushd ../fftw-3.3.8-single-avx2
 %configure --disable-static --enable-shared --enable-threads --enable-float --enable-avx2 --enable-fma --libdir=/usr/lib64/haswell
 make V=1  %{?_smp_mflags}
 popd
 
-pushd ../fftw-3.3.6-double-avx2
+pushd ../fftw-3.3.8-double-avx2
 %configure --disable-static --enable-shared --enable-threads --enable-avx2 --enable-fma --libdir=/usr/lib64/haswell
 make V=1  %{?_smp_mflags}
 popd
 
 export CFLAGS="$CFLAGS  -march=skylake-avx512"
 export CXXFLAGS="$CXXFLAGS  -march=skylake-avx512"
-pushd ../fftw-3.3.6-single-avx512
+pushd ../fftw-3.3.8-single-avx512
 %configure --disable-static --enable-shared --enable-threads --enable-float --enable-avx2 --enable-avx512 --enable-fma --libdir=/usr/lib64/haswell/avx512_1/
 make V=1  %{?_smp_mflags}
 popd
-pushd ../fftw-3.3.6-double-avx512
+pushd ../fftw-3.3.8-double-avx512
 %configure --disable-static --enable-shared --enable-threads --enable-avx2 --enable-avx512 --enable-fma --libdir=/usr/lib64/haswell/avx512_1/
 make V=1  %{?_smp_mflags}
 popd
@@ -116,37 +116,37 @@ popd
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost
-pushd ../fftw-3.3.6-single
+pushd ../fftw-3.3.8-single
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 popd
-pushd ../fftw-3.3.6-double
+pushd ../fftw-3.3.8-double
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 popd
-pushd ../fftw-3.3.6-long-double
+pushd ../fftw-3.3.8-long-double
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 popd
 
 %install
 rm -rf %{buildroot}
-pushd ../fftw-3.3.6-double-avx2
+pushd ../fftw-3.3.8-double-avx2
 %make_install
 popd
-pushd ../fftw-3.3.6-single-avx2
+pushd ../fftw-3.3.8-single-avx2
 %make_install
 popd
-pushd ../fftw-3.3.6-double-avx512
+pushd ../fftw-3.3.8-double-avx512
 %make_install
 popd
-pushd ../fftw-3.3.6-single-avx512
+pushd ../fftw-3.3.8-single-avx512
 %make_install
 popd
-pushd ../fftw-3.3.6-long-double
+pushd ../fftw-3.3.8-long-double
 %make_install
 popd
-pushd ../fftw-3.3.6-single
+pushd ../fftw-3.3.8-single
 %make_install
 popd
-pushd ../fftw-3.3.6-double
+pushd ../fftw-3.3.8-double
 %make_install
 popd
 
@@ -169,15 +169,21 @@ popd
 /usr/include/fftw3q.f03
 /usr/lib64/*.so
 /usr/lib64/pkgconfig/*.pc
+/usr/lib64/cmake/fftw3/FFTW3Config.cmake
+/usr/lib64/cmake/fftw3/FFTW3ConfigVersion.cmake
+/usr/lib64/cmake/fftw3/FFTW3fConfig.cmake
+/usr/lib64/cmake/fftw3/FFTW3fConfigVersion.cmake
+/usr/lib64/cmake/fftw3/FFTW3lConfig.cmake
+/usr/lib64/cmake/fftw3/FFTW3lConfigVersion.cmake
+%exclude /usr/lib64/haswell/avx512_1/cmake/fftw3/FFTW3Config.cmake
+%exclude /usr/lib64/haswell/avx512_1/cmake/fftw3/FFTW3ConfigVersion.cmake
+%exclude /usr/lib64/haswell/avx512_1/cmake/fftw3/FFTW3fConfig.cmake
+%exclude /usr/lib64/haswell/avx512_1/cmake/fftw3/FFTW3fConfigVersion.cmake
+%exclude /usr/lib64/haswell/cmake/fftw3/FFTW3Config.cmake
+%exclude /usr/lib64/haswell/cmake/fftw3/FFTW3ConfigVersion.cmake
+%exclude /usr/lib64/haswell/cmake/fftw3/FFTW3fConfig.cmake
+%exclude /usr/lib64/haswell/cmake/fftw3/FFTW3fConfigVersion.cmake
 
-%exclude /usr/lib64/haswell/libfftw3.so
-%exclude /usr/lib64/haswell/libfftw3_threads.so
-%exclude /usr/lib64/haswell/libfftw3f.so
-%exclude /usr/lib64/haswell/libfftw3f_threads.so
-%exclude /usr/lib64/haswell/pkgconfig/fftw3.pc
-%exclude /usr/lib64/haswell/pkgconfig/fftw3f.pc
-%exclude /usr/lib64/haswell/avx512_1/pkgconfig/fftw3.pc
-%exclude /usr/lib64/haswell/avx512_1/pkgconfig/fftw3f.pc
 %exclude /usr/lib64/haswell/avx512_1/*.so
 
 %files doc
