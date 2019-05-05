@@ -185,6 +185,8 @@ popd
 %exclude /usr/lib64/haswell/cmake/fftw3/FFTW3fConfigVersion.cmake
 
 %exclude /usr/lib64/haswell/avx512_1/*.so
+%exclude /usr/lib64/haswell/libfftw3.so
+%exclude   /usr/lib64/haswell/libfftw3f.so
 
 %files doc
 %defattr(-,root,root,-)
