@@ -5,20 +5,20 @@ for build in \
 	"single,--enable-float,--enable-sse2,--libdir=/usr/lib64" \
 	"double,--enable-sse2,--libdir=/usr/lib64" \
 	"long-double,--enable-long-double,--libdir=/usr/lib64" \
-	"double-avx2,--enable-float,--enable-avx2,--enable-fma,--libdir=/usr/lib64/haswell" \
-	"single-avx2,--enable-avx2,--enable-fma,--libdir=/usr/lib64/haswell" \
-	"double-avx512,--enable-float,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1" \
-	"single-avx512,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1"; \
+	"single-avx2,--enable-float,--enable-avx2,--enable-fma,--libdir=/usr/lib64/haswell" \
+	"double-avx2,--enable-avx2,--enable-fma,--libdir=/usr/lib64/haswell" \
+	"single-avx512,--enable-float,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1" \
+	"double-avx512,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1"; \
 do
 	dir=$(echo $build | cut -d, -f1)
 	flags=$(echo $build | cut -d, -f2- | sed 's/,/ /g')
 
-	if echo $flags | grep -q avx2; then
-		export CFLAGS="$CFLAGS -march=haswell -mtune=haswell"
-		export CXXFLAGS="$CXXFLAGS -march=haswell -mtune-haswell"
-	elif echo $flags | grep -q avx512; then
+	if echo $flags | grep -q avx512; then
 		export CFLAGS="$CFLAGS  -march=skylake-avx512"
 		export CXXFLAGS="$CXXFLAGS  -march=skylake-avx512"
+	elif echo $flags | grep -q avx2; then
+		export CFLAGS="$CFLAGS -march=haswell -mtune=haswell"
+		export CXXFLAGS="$CXXFLAGS -march=haswell -mtune-haswell"
 	fi
 
 	mkdir build-$dir

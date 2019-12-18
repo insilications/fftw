@@ -4,7 +4,7 @@
 #
 Name     : fftw
 Version  : 3.3.8
-Release  : 26
+Release  : 28
 URL      : http://www.fftw.org/fftw-3.3.8.tar.gz
 Source0  : http://www.fftw.org/fftw-3.3.8.tar.gz
 Summary  : fast Fourier transform library
@@ -92,7 +92,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1573851715
+export SOURCE_DATE_EPOCH=1576711888
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -105,7 +105,7 @@ make  %{?_smp_mflags}  -n ||:
 
 
 %install
-export SOURCE_DATE_EPOCH=1573851715
+export SOURCE_DATE_EPOCH=1576711888
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/fftw
 cp %{_builddir}/fftw-3.3.8/COPYING %{buildroot}/usr/share/package-licenses/fftw/68c94ffc34f8ad2d7bfae3f5a6b996409211c1b1
@@ -116,24 +116,27 @@ cp %{_builddir}/fftw-3.3.8/doc/license.texi %{buildroot}/usr/share/package-licen
 ## install_append content
 export CFLAGS="$CFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition -ffast-math "
 export CXXFLAGS="$CXXFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition "
+
 for build in \
 "single,--enable-float,--enable-sse2,--libdir=/usr/lib64" \
 "double,--enable-sse2,--libdir=/usr/lib64" \
 "long-double,--enable-long-double,--libdir=/usr/lib64" \
-"double-avx2,--enable-float,--enable-avx2,--enable-fma,--libdir=/usr/lib64/haswell" \
-"single-avx2,--enable-avx2,--enable-fma,--libdir=/usr/lib64/haswell" \
-"double-avx512,--enable-float,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1" \
-"single-avx512,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1"; \
+"single-avx2,--enable-float,--enable-avx2,--enable-fma,--libdir=/usr/lib64/haswell" \
+"double-avx2,--enable-avx2,--enable-fma,--libdir=/usr/lib64/haswell" \
+"single-avx512,--enable-float,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1" \
+"double-avx512,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1"; \
 do
 dir=$(echo $build | cut -d, -f1)
 flags=$(echo $build | cut -d, -f2- | sed 's/,/ /g')
-if echo $flags | grep -q avx2; then
-export CFLAGS="$CFLAGS -march=haswell -mtune=haswell"
-export CXXFLAGS="$CXXFLAGS -march=haswell -mtune-haswell"
-elif echo $flags | grep -q avx512; then
+
+if echo $flags | grep -q avx512; then
 export CFLAGS="$CFLAGS  -march=skylake-avx512"
 export CXXFLAGS="$CXXFLAGS  -march=skylake-avx512"
+elif echo $flags | grep -q avx2; then
+export CFLAGS="$CFLAGS -march=haswell -mtune=haswell"
+export CXXFLAGS="$CXXFLAGS -march=haswell -mtune-haswell"
 fi
+
 mkdir build-$dir
 pushd build-$dir
 ../configure --disable-static --enable-shared --enable-threads \
@@ -143,6 +146,7 @@ make V=1 %{?_smp_mflags}
 %make_install
 popd
 done
+
 find %{buildroot}/usr/lib64 -name 'FFTW3*.cmake' -exec rm {} \;
 ## install_append end
 
