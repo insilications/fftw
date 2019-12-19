@@ -4,7 +4,7 @@
 #
 Name     : fftw
 Version  : 3.3.8
-Release  : 28
+Release  : 29
 URL      : http://www.fftw.org/fftw-3.3.8.tar.gz
 Source0  : http://www.fftw.org/fftw-3.3.8.tar.gz
 Summary  : fast Fourier transform library
@@ -92,7 +92,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1576711888
+export SOURCE_DATE_EPOCH=1576794087
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -105,7 +105,7 @@ make  %{?_smp_mflags}  -n ||:
 
 
 %install
-export SOURCE_DATE_EPOCH=1576711888
+export SOURCE_DATE_EPOCH=1576794087
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/fftw
 cp %{_builddir}/fftw-3.3.8/COPYING %{buildroot}/usr/share/package-licenses/fftw/68c94ffc34f8ad2d7bfae3f5a6b996409211c1b1
@@ -126,15 +126,18 @@ for build in \
 "single-avx512,--enable-float,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1" \
 "double-avx512,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1"; \
 do
+skip_test=0
 dir=$(echo $build | cut -d, -f1)
 flags=$(echo $build | cut -d, -f2- | sed 's/,/ /g')
 
 if echo $flags | grep -q avx512; then
 export CFLAGS="$CFLAGS  -march=skylake-avx512"
 export CXXFLAGS="$CXXFLAGS  -march=skylake-avx512"
+grep -q 'avx512[^ ]*' /proc/cpuinfo || skip_test=1
 elif echo $flags | grep -q avx2; then
 export CFLAGS="$CFLAGS -march=haswell -mtune=haswell"
 export CXXFLAGS="$CXXFLAGS -march=haswell -mtune-haswell"
+grep -q 'avx2[^ ]*' /proc/cpuinfo || skip_test=1
 fi
 
 mkdir build-$dir
@@ -144,6 +147,10 @@ pushd build-$dir
 $flags
 make V=1 %{?_smp_mflags}
 %make_install
+if [ $skip_test -eq 0 ]; then
+echo "**** Testing $dir **** "
+make check %{?_smp_mflags}
+fi
 popd
 done
 
