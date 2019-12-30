@@ -4,7 +4,7 @@
 #
 Name     : fftw
 Version  : 3.3.8
-Release  : 29
+Release  : 30
 URL      : http://www.fftw.org/fftw-3.3.8.tar.gz
 Source0  : http://www.fftw.org/fftw-3.3.8.tar.gz
 Summary  : fast Fourier transform library
@@ -16,6 +16,8 @@ Requires: fftw-lib = %{version}-%{release}
 Requires: fftw-license = %{version}-%{release}
 Requires: fftw-man = %{version}-%{release}
 BuildRequires : gfortran
+BuildRequires : openmpi-dev
+BuildRequires : openssh
 BuildRequires : texinfo
 
 %description
@@ -92,7 +94,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1576794087
+export SOURCE_DATE_EPOCH=1577730182
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -105,7 +107,7 @@ make  %{?_smp_mflags}  -n ||:
 
 
 %install
-export SOURCE_DATE_EPOCH=1576794087
+export SOURCE_DATE_EPOCH=1577730182
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/fftw
 cp %{_builddir}/fftw-3.3.8/COPYING %{buildroot}/usr/share/package-licenses/fftw/68c94ffc34f8ad2d7bfae3f5a6b996409211c1b1
@@ -114,8 +116,8 @@ cp %{_builddir}/fftw-3.3.8/doc/html/License-and-Copyright.html %{buildroot}/usr/
 cp %{_builddir}/fftw-3.3.8/doc/license.texi %{buildroot}/usr/share/package-licenses/fftw/ee99393637fb0b0a5df385deac9040c5305f38b2
 :
 ## install_append content
-export CFLAGS="$CFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition -ffast-math "
-export CXXFLAGS="$CXXFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition "
+CFLAGS_IN="$CFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition "
+CXXFLAGS_IN="$CXXFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition "
 
 for build in \
 "single,--enable-float,--enable-sse2,--libdir=/usr/lib64" \
@@ -124,20 +126,31 @@ for build in \
 "single-avx2,--enable-float,--enable-avx2,--enable-fma,--libdir=/usr/lib64/haswell" \
 "double-avx2,--enable-avx2,--enable-fma,--libdir=/usr/lib64/haswell" \
 "single-avx512,--enable-float,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1" \
-"double-avx512,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1"; \
+"double-avx512,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1" \
+"single-mpi,--enable-mpi,--enable-float,--enable-sse2,--libdir=/usr/lib64"  \
+"double-mpi,--enable-mpi,--enable-sse2,--libdir=/usr/lib64" \
+"long-double-mpi,--enable-mpi,--enable-long-double,--libdir=/usr/lib64" \
+"single-avx2-mpi,--enable-mpi,--enable-float,--enable-avx2,--enable-fma,--libdir=/usr/lib64/haswell" \
+"double-avx2-mpi,--enable-mpi,--enable-avx2,--enable-fma,--libdir=/usr/lib64/haswell" \
+"single-avx512-mpi,--enable-mpi,--enable-float,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1" \
+"double-avx512-mpi,--enable-mpi,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1" ; \
 do
 skip_test=0
 dir=$(echo $build | cut -d, -f1)
 flags=$(echo $build | cut -d, -f2- | sed 's/,/ /g')
+lib_path=$(echo $build | cut -d= -f1 --complement)
 
 if echo $flags | grep -q avx512; then
-export CFLAGS="$CFLAGS  -march=skylake-avx512"
-export CXXFLAGS="$CXXFLAGS  -march=skylake-avx512"
+export CFLAGS="$CFLAGS_IN -march=skylake-avx512"
+export CXXFLAGS="$CXXFLAGS_IN -march=skylake-avx512"
 grep -q 'avx512[^ ]*' /proc/cpuinfo || skip_test=1
 elif echo $flags | grep -q avx2; then
-export CFLAGS="$CFLAGS -march=haswell -mtune=haswell"
-export CXXFLAGS="$CXXFLAGS -march=haswell -mtune-haswell"
+export CFLAGS="$CFLAGS_IN -march=haswell -mtune=haswell"
+export CXXFLAGS="$CXXFLAGS_IN -march=haswell -mtune-haswell"
 grep -q 'avx2[^ ]*' /proc/cpuinfo || skip_test=1
+else
+export CFLAGS="$CFLAGS_IN"
+export CXXFLAGS="$CXXFLAGS_IN"
 fi
 
 mkdir build-$dir
@@ -148,8 +161,8 @@ $flags
 make V=1 %{?_smp_mflags}
 %make_install
 if [ $skip_test -eq 0 ]; then
-echo "**** Testing $dir **** "
-make check %{?_smp_mflags}
+echo "**** Testing $dir CFLAGS:$CFLAGS "
+LD_LIBRARY_PATH=%{buildroot}$lib_path make check
 fi
 popd
 done
@@ -169,20 +182,30 @@ find %{buildroot}/usr/lib64 -name 'FFTW3*.cmake' -exec rm {} \;
 
 %files dev
 %defattr(-,root,root,-)
+/usr/include/fftw3-mpi.f03
+/usr/include/fftw3-mpi.h
 /usr/include/fftw3.f
 /usr/include/fftw3.f03
 /usr/include/fftw3.h
+/usr/include/fftw3l-mpi.f03
 /usr/include/fftw3l.f03
 /usr/include/fftw3q.f03
 /usr/lib64/haswell/avx512_1/libfftw3.so
+/usr/lib64/haswell/avx512_1/libfftw3_mpi.so
 /usr/lib64/haswell/avx512_1/libfftw3f.so
+/usr/lib64/haswell/avx512_1/libfftw3f_mpi.so
 /usr/lib64/haswell/libfftw3.so
+/usr/lib64/haswell/libfftw3_mpi.so
 /usr/lib64/haswell/libfftw3f.so
+/usr/lib64/haswell/libfftw3f_mpi.so
 /usr/lib64/libfftw3.so
+/usr/lib64/libfftw3_mpi.so
 /usr/lib64/libfftw3_threads.so
 /usr/lib64/libfftw3f.so
+/usr/lib64/libfftw3f_mpi.so
 /usr/lib64/libfftw3f_threads.so
 /usr/lib64/libfftw3l.so
+/usr/lib64/libfftw3l_mpi.so
 /usr/lib64/libfftw3l_threads.so
 /usr/lib64/pkgconfig/fftw3.pc
 /usr/lib64/pkgconfig/fftw3f.pc
@@ -198,22 +221,36 @@ find %{buildroot}/usr/lib64 -name 'FFTW3*.cmake' -exec rm {} \;
 %defattr(-,root,root,-)
 /usr/lib64/haswell/avx512_1/libfftw3.so.3
 /usr/lib64/haswell/avx512_1/libfftw3.so.3.5.8
+/usr/lib64/haswell/avx512_1/libfftw3_mpi.so.3
+/usr/lib64/haswell/avx512_1/libfftw3_mpi.so.3.5.8
 /usr/lib64/haswell/avx512_1/libfftw3f.so.3
 /usr/lib64/haswell/avx512_1/libfftw3f.so.3.5.8
+/usr/lib64/haswell/avx512_1/libfftw3f_mpi.so.3
+/usr/lib64/haswell/avx512_1/libfftw3f_mpi.so.3.5.8
 /usr/lib64/haswell/libfftw3.so.3
 /usr/lib64/haswell/libfftw3.so.3.5.8
+/usr/lib64/haswell/libfftw3_mpi.so.3
+/usr/lib64/haswell/libfftw3_mpi.so.3.5.8
 /usr/lib64/haswell/libfftw3f.so.3
 /usr/lib64/haswell/libfftw3f.so.3.5.8
+/usr/lib64/haswell/libfftw3f_mpi.so.3
+/usr/lib64/haswell/libfftw3f_mpi.so.3.5.8
 /usr/lib64/libfftw3.so.3
 /usr/lib64/libfftw3.so.3.5.8
+/usr/lib64/libfftw3_mpi.so.3
+/usr/lib64/libfftw3_mpi.so.3.5.8
 /usr/lib64/libfftw3_threads.so.3
 /usr/lib64/libfftw3_threads.so.3.5.8
 /usr/lib64/libfftw3f.so.3
 /usr/lib64/libfftw3f.so.3.5.8
+/usr/lib64/libfftw3f_mpi.so.3
+/usr/lib64/libfftw3f_mpi.so.3.5.8
 /usr/lib64/libfftw3f_threads.so.3
 /usr/lib64/libfftw3f_threads.so.3.5.8
 /usr/lib64/libfftw3l.so.3
 /usr/lib64/libfftw3l.so.3.5.8
+/usr/lib64/libfftw3l_mpi.so.3
+/usr/lib64/libfftw3l_mpi.so.3.5.8
 /usr/lib64/libfftw3l_threads.so.3
 /usr/lib64/libfftw3l_threads.so.3.5.8
 

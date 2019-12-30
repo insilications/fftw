@@ -1,5 +1,5 @@
-export CFLAGS="$CFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition -ffast-math "
-export CXXFLAGS="$CXXFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition "
+CFLAGS_IN="$CFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition "
+CXXFLAGS_IN="$CXXFLAGS -ffunction-sections -falign-functions=32 -O3 -flto -fno-semantic-interposition "
 
 for build in \
 	"single,--enable-float,--enable-sse2,--libdir=/usr/lib64" \
@@ -8,20 +8,31 @@ for build in \
 	"single-avx2,--enable-float,--enable-avx2,--enable-fma,--libdir=/usr/lib64/haswell" \
 	"double-avx2,--enable-avx2,--enable-fma,--libdir=/usr/lib64/haswell" \
 	"single-avx512,--enable-float,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1" \
-	"double-avx512,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1"; \
+	"double-avx512,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1" \
+	"single-mpi,--enable-mpi,--enable-float,--enable-sse2,--libdir=/usr/lib64"  \
+	"double-mpi,--enable-mpi,--enable-sse2,--libdir=/usr/lib64" \
+	"long-double-mpi,--enable-mpi,--enable-long-double,--libdir=/usr/lib64" \
+	"single-avx2-mpi,--enable-mpi,--enable-float,--enable-avx2,--enable-fma,--libdir=/usr/lib64/haswell" \
+	"double-avx2-mpi,--enable-mpi,--enable-avx2,--enable-fma,--libdir=/usr/lib64/haswell" \
+	"single-avx512-mpi,--enable-mpi,--enable-float,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1" \
+	"double-avx512-mpi,--enable-mpi,--enable-avx2,--enable-avx512,--enable-fma,--libdir=/usr/lib64/haswell/avx512_1" ; \
 do
 	skip_test=0
 	dir=$(echo $build | cut -d, -f1)
 	flags=$(echo $build | cut -d, -f2- | sed 's/,/ /g')
+	lib_path=$(echo $build | cut -d= -f1 --complement)
 
 	if echo $flags | grep -q avx512; then
-		export CFLAGS="$CFLAGS  -march=skylake-avx512"
-		export CXXFLAGS="$CXXFLAGS  -march=skylake-avx512"
+		export CFLAGS="$CFLAGS_IN -march=skylake-avx512"
+		export CXXFLAGS="$CXXFLAGS_IN -march=skylake-avx512"
 		grep -q 'avx512[^ ]*' /proc/cpuinfo || skip_test=1
 	elif echo $flags | grep -q avx2; then
-		export CFLAGS="$CFLAGS -march=haswell -mtune=haswell"
-		export CXXFLAGS="$CXXFLAGS -march=haswell -mtune-haswell"
+		export CFLAGS="$CFLAGS_IN -march=haswell -mtune=haswell"
+		export CXXFLAGS="$CXXFLAGS_IN -march=haswell -mtune-haswell"
 		grep -q 'avx2[^ ]*' /proc/cpuinfo || skip_test=1
+	else
+		export CFLAGS="$CFLAGS_IN"
+		export CXXFLAGS="$CXXFLAGS_IN"
 	fi
 
 	mkdir build-$dir
@@ -32,8 +43,8 @@ do
 	make V=1 %{?_smp_mflags}
 	%make_install
 	if [ $skip_test -eq 0 ]; then
-		echo "**** Testing $dir **** "
-		make check %{?_smp_mflags}
+		echo "**** Testing $dir CFLAGS:$CFLAGS "
+		LD_LIBRARY_PATH=%{buildroot}$lib_path make check
 	fi
 	popd
 done
