@@ -4,7 +4,7 @@
 #
 Name     : fftw
 Version  : 3.3.8
-Release  : 30
+Release  : 31
 URL      : http://www.fftw.org/fftw-3.3.8.tar.gz
 Source0  : http://www.fftw.org/fftw-3.3.8.tar.gz
 Summary  : fast Fourier transform library
@@ -19,6 +19,7 @@ BuildRequires : gfortran
 BuildRequires : openmpi-dev
 BuildRequires : openssh
 BuildRequires : texinfo
+Patch1: avx512-alignment.patch
 
 %description
 FFTW is a free collection of fast C routines for computing the
@@ -88,13 +89,14 @@ man components for the fftw package.
 %prep
 %setup -q -n fftw-3.3.8
 cd %{_builddir}/fftw-3.3.8
+%patch1 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1577730182
+export SOURCE_DATE_EPOCH=1578073828
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -107,7 +109,7 @@ make  %{?_smp_mflags}  -n ||:
 
 
 %install
-export SOURCE_DATE_EPOCH=1577730182
+export SOURCE_DATE_EPOCH=1578073828
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/fftw
 cp %{_builddir}/fftw-3.3.8/COPYING %{buildroot}/usr/share/package-licenses/fftw/68c94ffc34f8ad2d7bfae3f5a6b996409211c1b1

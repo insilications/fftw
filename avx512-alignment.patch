@@ -1,0 +1,39 @@
+From ebde7c4e4607afb6bbba7e6609fae56ff0fda01b Mon Sep 17 00:00:00 2001
+From: Matteo Frigo <athena@fftw.org>
+Date: Thu, 16 May 2019 15:49:28 -0400
+Subject: [PATCH] Fix alignment requirements for avx512
+
+The avx512 alignment requirement was set to 64 bytes, but this is
+wrong.  Alignment requirements are a property of the platform (e.g.,
+x86) and not of the instruction set (e.g., AVX).  Among other things,
+this broke wisdom with avx512.
+
+Good thing that avx512 was marked as experimental.  It's still
+experimental, because I have no hardware to test it.
+
+Thanks Tom Epperly for the bug report and debugging assistance.
+---
+ simd-support/simd-common.h | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
+
+diff --git a/simd-support/simd-common.h b/simd-support/simd-common.h
+index 90031fd6..ad2c96fa 100644
+--- a/simd-support/simd-common.h
++++ b/simd-support/simd-common.h
+@@ -23,15 +23,7 @@
+    set of alignment contraints.  So this alignment stuff cannot be
+    defined in the SIMD header files.  Rather than defining a separate
+    set of "machine" header files, we just do this ugly ifdef here. */
+-#if defined(HAVE_AVX512)
+-#  if defined(FFTW_SINGLE)
+-#    define ALIGNMENT 8     /* Alignment for the LD/ST macros */
+-#    define ALIGNMENTA 64   /* Alignment for the LDA/STA macros */
+-#  else
+-#    define ALIGNMENT 16    /* Alignment for the LD/ST macros */
+-#    define ALIGNMENTA 64   /* Alignment for the LDA/STA macros */
+-#  endif
+-#elif defined(HAVE_SSE2) || defined(HAVE_AVX) || defined(HAVE_AVX2) || (HAVE_AVX_128_FMA)
++#if defined(HAVE_SSE2) || defined(HAVE_AVX) || defined(HAVE_AVX2) || defined(HAVE_AVX_128_FMA) || defined(HAVE_AVX512)
+ #  if defined(FFTW_SINGLE)
+ #    define ALIGNMENT 8     /* Alignment for the LD/ST macros */
+ #    define ALIGNMENTA 16   /* Alignment for the LDA/STA macros */
