@@ -4,7 +4,7 @@
 #
 Name     : fftw
 Version  : 3.3.8
-Release  : 31
+Release  : 32
 URL      : http://www.fftw.org/fftw-3.3.8.tar.gz
 Source0  : http://www.fftw.org/fftw-3.3.8.tar.gz
 Summary  : fast Fourier transform library
@@ -96,20 +96,20 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1578073828
+export SOURCE_DATE_EPOCH=1586567660
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
 export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
 export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
 make  %{?_smp_mflags}  -n ||:
 
 
 %install
-export SOURCE_DATE_EPOCH=1578073828
+export SOURCE_DATE_EPOCH=1586567660
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/fftw
 cp %{_builddir}/fftw-3.3.8/COPYING %{buildroot}/usr/share/package-licenses/fftw/68c94ffc34f8ad2d7bfae3f5a6b996409211c1b1
@@ -157,7 +157,7 @@ fi
 
 mkdir build-$dir
 pushd build-$dir
-../configure --disable-static --enable-shared --enable-threads \
+../configure --disable-static --enable-shared --enable-threads --enable-openmp \
 --prefix=/usr --sysconfdir=/etc --localstatedir=/var \
 $flags
 make V=1 %{?_smp_mflags}
@@ -202,12 +202,15 @@ find %{buildroot}/usr/lib64 -name 'FFTW3*.cmake' -exec rm {} \;
 /usr/lib64/haswell/libfftw3f_mpi.so
 /usr/lib64/libfftw3.so
 /usr/lib64/libfftw3_mpi.so
+/usr/lib64/libfftw3_omp.so
 /usr/lib64/libfftw3_threads.so
 /usr/lib64/libfftw3f.so
 /usr/lib64/libfftw3f_mpi.so
+/usr/lib64/libfftw3f_omp.so
 /usr/lib64/libfftw3f_threads.so
 /usr/lib64/libfftw3l.so
 /usr/lib64/libfftw3l_mpi.so
+/usr/lib64/libfftw3l_omp.so
 /usr/lib64/libfftw3l_threads.so
 /usr/lib64/pkgconfig/fftw3.pc
 /usr/lib64/pkgconfig/fftw3f.pc
@@ -241,18 +244,24 @@ find %{buildroot}/usr/lib64 -name 'FFTW3*.cmake' -exec rm {} \;
 /usr/lib64/libfftw3.so.3.5.8
 /usr/lib64/libfftw3_mpi.so.3
 /usr/lib64/libfftw3_mpi.so.3.5.8
+/usr/lib64/libfftw3_omp.so.3
+/usr/lib64/libfftw3_omp.so.3.5.8
 /usr/lib64/libfftw3_threads.so.3
 /usr/lib64/libfftw3_threads.so.3.5.8
 /usr/lib64/libfftw3f.so.3
 /usr/lib64/libfftw3f.so.3.5.8
 /usr/lib64/libfftw3f_mpi.so.3
 /usr/lib64/libfftw3f_mpi.so.3.5.8
+/usr/lib64/libfftw3f_omp.so.3
+/usr/lib64/libfftw3f_omp.so.3.5.8
 /usr/lib64/libfftw3f_threads.so.3
 /usr/lib64/libfftw3f_threads.so.3.5.8
 /usr/lib64/libfftw3l.so.3
 /usr/lib64/libfftw3l.so.3.5.8
 /usr/lib64/libfftw3l_mpi.so.3
 /usr/lib64/libfftw3l_mpi.so.3.5.8
+/usr/lib64/libfftw3l_omp.so.3
+/usr/lib64/libfftw3l_omp.so.3.5.8
 /usr/lib64/libfftw3l_threads.so.3
 /usr/lib64/libfftw3l_threads.so.3.5.8
 

@@ -37,7 +37,7 @@ do
 
 	mkdir build-$dir
 	pushd build-$dir
-	../configure --disable-static --enable-shared --enable-threads \
+	../configure --disable-static --enable-shared --enable-threads --enable-openmp \
 		--prefix=/usr --sysconfdir=/etc --localstatedir=/var \
 		$flags
 	make V=1 %{?_smp_mflags}
