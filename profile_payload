@@ -1,0 +1,2 @@
+LD_LIBRARY_PATH="/insilications/apps/fftw-3.3.8/.libs:/insilications/apps/fftw-3.3.8:$LD_LIBRARY_PATH" make check 
+LD_LIBRARY_PATH=%{buildroot}$lib_path make check

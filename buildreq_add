@@ -3,3 +3,4 @@
 texinfo
 openmpi-dev
 openssh
+gfortran
