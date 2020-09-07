@@ -225,21 +225,9 @@ find %{buildroot}/usr/lib64 -name 'FFTW3*.cmake' -exec rm {} \;
 
 %files lib
 %defattr(-,root,root,-)
-/usr/lib64/haswell/avx512_1/libfftw3.so.3
-/usr/lib64/haswell/avx512_1/libfftw3.so.3.5.8
-/usr/lib64/haswell/avx512_1/libfftw3_mpi.so.3
-/usr/lib64/haswell/avx512_1/libfftw3_mpi.so.3.5.8
-/usr/lib64/haswell/avx512_1/libfftw3f.so.3
-/usr/lib64/haswell/avx512_1/libfftw3f.so.3.5.8
-/usr/lib64/haswell/avx512_1/libfftw3f_mpi.so.3
-/usr/lib64/haswell/avx512_1/libfftw3f_mpi.so.3.5.8
-/usr/lib64/haswell/libfftw3.so.3
 /usr/lib64/haswell/libfftw3.so.3.5.8
-/usr/lib64/haswell/libfftw3_mpi.so.3
 /usr/lib64/haswell/libfftw3_mpi.so.3.5.8
-/usr/lib64/haswell/libfftw3f.so.3
 /usr/lib64/haswell/libfftw3f.so.3.5.8
-/usr/lib64/haswell/libfftw3f_mpi.so.3
 /usr/lib64/haswell/libfftw3f_mpi.so.3.5.8
 /usr/lib64/libfftw3.so.3
 /usr/lib64/libfftw3_mpi.so.3
