@@ -15,8 +15,8 @@ export NM=gcc-nm
 #
 export MAKEFLAGS=%{?_smp_mflags}
 #
-%define _lto_cflags 1
-#%define _lto_cflags %{nil}
+%global _lto_cflags 1
+#global _lto_cflags %{nil}
 #
 # export PATH="/usr/lib64/ccache/bin:$PATH"
 # export CCACHE_NOHASHDIR=1
