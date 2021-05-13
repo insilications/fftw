@@ -1,1 +1,1 @@
-./configure --enable-static --enable-shared --enable-threads --enable-openmp --prefix=/usr --sysconfdir=/etc --localstatedir=/var --enable-mpi --enable-avx2 --enable-fma --libdir=/usr/lib64
+./configure --enable-static --enable-shared --enable-threads --with-combined-threads --prefix=/usr --sysconfdir=/etc --localstatedir=/var --enable-avx2 --enable-fma --libdir=/usr/lib64

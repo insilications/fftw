@@ -1,1 +1,3 @@
-LD_LIBRARY_PATH=".:./.libs:$LD_LIBRARY_PATH" make -j16 check V=1 VERBOSE=1
+pushd tests/
+LD_LIBRARY_PATH="../.libs:$LD_LIBRARY_PATH" V=1 VERBOSE=1 make -j16 smallcheck
+popd
